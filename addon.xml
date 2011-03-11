@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.sneak" name="Sneak" version="0.1" provider-name="htpc-tac">
+    <requires>
+        <import addon="xbmc.python" version="1.0"/>
+        <import addon="script.module.pysqlite" version="2.5.6"/>
+    </requires>
+    <extension point="xbmc.python.script" library="addon.py"/>
+    <extension point="xbmc.addon.metadata">
+    	<platform>all</platform>
+        <summary>Sneak</summary>
+        <description>Play a unwatched random movie</description>
+    </extension>
+</addon>

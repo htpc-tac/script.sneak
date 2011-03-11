@@ -1,0 +1,21 @@
+
+Version 0.1 - 2011-03-02
+- Initial Version
+
+Version 0.1.1 - 2011-03-11
+- new Settings working: run with Cinema
+						min Resolution of Movie
+			
+toDo:
+	Sneak Icon
+
+	Year Limit
+	Movie Rating
+	exclude paths  like 3D content
+	default intro if no Cinema Experience choosen
+	
+	Enable Gui 
+		Exit
+		direct settings
+		Display 3 new Posters
+		Display search results

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+    <!-- translated by htpc-tac -->
+
+<strings>
+	<!-- Label separators -->
+	<string id="32803">Sneak Einstellungen</string>
+	<string id="32440">run with Cinema Experience</string>
+	<string id="32441">minimal Resolution of Movie</string>
+	<string id="32442">576p</string>
+	<string id="32443">720p</string>
+	<string id="32444">1080p</string>
+	<string id="32445">spiele Filme nicht älter als von Jahr</string>
+	<string id="32446">aktiviere GUI</string>
+	<string id="32447">Limitiere Altersfreigabe</string>
+	<string id="32448">Schließe Pfad aus</string>
+	<string id="32449">Auszuschließender Pfad</string>
+</strings>
