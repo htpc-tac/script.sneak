@@ -96,7 +96,7 @@ def runAction( mode = "0" , resolution = "0"):
             i=1
             
 
-addon = xbmcaddon.Addon(id = 'script.sneak.headless')
+addon = xbmcaddon.Addon(id = 'script.sneak')
 resolution = addon.getSetting('play_resolution')
 year_limit = addon.getSetting('year_limit')
 
