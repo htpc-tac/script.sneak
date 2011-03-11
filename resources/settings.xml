@@ -5,7 +5,7 @@
 		<setting type="lsep" label="32803" />
 		<setting id="play_mode" type="bool" label="32440" default="true" />
 		<setting id="play_resolution" type="enum" lvalues="32442|32443|32444" label="32441" default="0" />
-		<setting id="year_limit" label="32445" type="number" default="2010"/>
+		<setting id="year_limit" label="32445" type="number" default="1900"/>
 		<setting id="enable_gui" type="bool" label="32446" default="false" />
 		<setting id="rating_limit" label="32447" type="labelenum" default="R" values="R|PG-13|PG|G" />
 		<setting id="ExcludePathOption" type="bool" label="32448" default="false" />

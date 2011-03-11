@@ -11,46 +11,54 @@ import os
 import traceback
 from urllib import quote_plus
 
-def runAction( mode = "0" , resolution = "0"):
+def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit = "R"):
 
         xbmc.log( "[script.sneak] - Value handed over for mode: %s" % mode, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Value handed over for resolution: %s" % resolution, xbmc.LOGNOTICE )
+        xbmc.log( "[script.sneak] - Value handed over for year_limit: %s" % year_limit, xbmc.LOGNOTICE )
+        xbmc.log( "[script.sneak] - Value handed over for rating_limit: %s" % rating_limit, xbmc.LOGNOTICE )
             
         xbmc.executebuiltin( "Playlist.Clear" )
         vplaylist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
         vplaylist.clear()
         
-        # sql statment: SELECT * FROM streamdetails, movieview WHERE  streamdetails.idFile = movieview.idFile AND iVideoHeight > 384h
-        #sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview WHERE movieview.playcount ISNULL ORDER BY RANDOM() LIMIT 1"
+        # Ratings set
+        if rating_limit== "PG-13":
+            rating_sql = "AND movie.c12  like '%%G%%' OR movie.c12 like '%%12%%' OR movie.c12 like '%%FSK 6%%' OR movie.c12 = 'Rated '"
+        elif rating_limit == "PG":
+            rating_sql = "AND movie.c12  like '%%PG%%' OR movie.c12 like '%%Rated G%%' OR movie.c12 like '%%FSK 6%%' OR movie.c12 = 'Rated '"
+        elif rating_limit == "G":
+            rating_sql = "AND movie.c12  like '%%Rated G%%' OR movie.c12 = 'Rated '"
+        else:
+            rating_sql = ""
         
+            
+        #Resolution set    
         if resolution == "0":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview WHERE movieview.playcount ISNULL ORDER BY RANDOM() LIMIT 1"
-            sql_count = "SELECT count() FROM movieview WHERE movieview.playcount ISNULL ORDER BY RANDOM() LIMIT 1"
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, movie WHERE movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % (year_limit, rating_sql)
+            
         elif resolution == "1":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails WHERE streamdetails.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 ORDER BY RANDOM() LIMIT 1"
-            sql_count = "SELECT count() FROM movieview, streamdetails WHERE streamdetails.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 ORDER BY RANDOM() LIMIT 1"
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 AND movieview.c07 >= '%s' ORDER BY RANDOM() LIMIT 1" % year_limit
+           
         elif resolution == "2":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails WHERE streamdetails.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 ORDER BY RANDOM() LIMIT 1"
-            sql_count = "SELECT count() FROM movieview, streamdetails WHERE streamdetails.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 ORDER BY RANDOM() LIMIT 1"
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 AND movieview.c07 >= '%s' ORDER BY RANDOM() LIMIT 1" % year_limit
+            
         
         xbmc.log( "[script.sneak] - SQL Statement: %s" % sql, xbmc.LOGNOTICE )
         
         try:
             movie_title, movie_path, movie_filename, dummy  = xbmc.executehttpapi( "QueryVideoDatabase(%s)" % quote_plus( sql ), ).split( "</field>" )
-            number_of_movies, dummy = xbmc.executehttpapi( "QueryVideoDatabase(%s)" % quote_plus( sql_count ), ).split( "</field></record>" )
+            
         except:
             xbmc.log( "[script.sneak] - SQL failed: " , xbmc.LOGNOTICE )
             movie_title ="" 
             movie_path ="" 
             movie_filename =""
-            number_of_movies = "<record><field>0"
+           
             
         
         #log sql result:
-        
-        dummy, number_of_movies = number_of_movies.split( "<record><field>" )
-        xbmc.log( "[script.sneak] - Count: %s" % number_of_movies, xbmc.LOGNOTICE )
-                
+                    
         xbmc.log( "[script.sneak] - Movie Title: %s" % movie_title, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Movie Path: %s" % movie_path, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Movie Filename: %s" % movie_filename, xbmc.LOGNOTICE )
@@ -99,15 +107,16 @@ def runAction( mode = "0" , resolution = "0"):
 addon = xbmcaddon.Addon(id = 'script.sneak')
 resolution = addon.getSetting('play_resolution')
 year_limit = addon.getSetting('year_limit')
+rating_limit = addon.getSetting('rating_limit')
 
 xbmc.log( "[script.sneak] - Value getting from settings: %s" % resolution, xbmc.LOGNOTICE )
 
 i=0
 if addon.getSetting('play_mode') == 'true':   
-        runAction(1, resolution)
+        runAction(1, resolution, year_limit, rating_limit)
    
 else:
-        runAction(0, resolution)
+        runAction(0, resolution, year_limit, rating_limit)
 
 #player=MyPlayer()
 #xbmc.sleep(3000)
