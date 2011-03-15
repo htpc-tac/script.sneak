@@ -11,11 +11,13 @@ import os
 import traceback
 from urllib import quote_plus
 
-def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit = "R"):
+def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit = "R", exclude_path = "0"):
 
         xbmc.log( "[script.sneak] - Value handed over for mode: %s" % mode, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Value handed over for resolution: %s" % resolution, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Value handed over for year_limit: %s" % year_limit, xbmc.LOGNOTICE )
+        xbmc.log( "[script.sneak] - Value handed over for rating_limit: %s" % rating_limit, xbmc.LOGNOTICE )
+        xbmc.log( "[script.sneak] - Value handed over for exclude_path: %s" % exclude_path, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Value handed over for rating_limit: %s" % rating_limit, xbmc.LOGNOTICE )
             
         xbmc.executebuiltin( "Playlist.Clear" )
@@ -24,24 +26,28 @@ def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit 
         
         # Ratings set
         if rating_limit== "PG-13":
-            rating_sql = "AND movie.c12  like '%%G%%' OR movie.c12 like '%%12%%' OR movie.c12 like '%%FSK 6%%' OR movie.c12 = 'Rated '"
+            rating_sql = "AND (movie.c12  like '%%G%%' OR movie.c12 like '%%12%%' OR movie.c12 like '%%FSK 6%%' OR movie.c12 = 'Rated ')"
         elif rating_limit == "PG":
-            rating_sql = "AND movie.c12  like '%%PG%%' OR movie.c12 like '%%Rated G%%' OR movie.c12 like '%%FSK 6%%' OR movie.c12 = 'Rated '"
+            rating_sql = "AND (movie.c12  like '%%PG%%' OR movie.c12 like '%%Rated G%%' OR movie.c12 like '%%FSK 6%%' OR movie.c12 = 'Rated ')"
         elif rating_limit == "G":
-            rating_sql = "AND movie.c12  like '%%Rated G%%' OR movie.c12 = 'Rated '"
+            rating_sql = "AND (movie.c12  like '%%Rated G%%' OR movie.c12 = 'Rated ')"
         else:
             rating_sql = ""
         
+        if exclude_path=="0":
+            exclude_path_sql=""
+        else:
+            exclude_path_sql=" AND movieview.strPath NOT LIKE '%%" + exclude_path + "%%'" 
             
         #Resolution set    
         if resolution == "0":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, movie WHERE movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % (year_limit, rating_sql)
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, movie WHERE movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND movieview.c07 >= '%s' %s %s ORDER BY RANDOM() LIMIT 1" % (year_limit, exclude_path_sql , rating_sql)
             
         elif resolution == "1":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 AND movieview.c07 >= '%s' ORDER BY RANDOM() LIMIT 1" % year_limit
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % year_limit, exclude_path_sql
            
         elif resolution == "2":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 AND movieview.c07 >= '%s' ORDER BY RANDOM() LIMIT 1" % year_limit
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % year_limit, exclude_path_sql
             
         
         xbmc.log( "[script.sneak] - SQL Statement: %s" % sql, xbmc.LOGNOTICE )
@@ -108,15 +114,21 @@ addon = xbmcaddon.Addon(id = 'script.sneak')
 resolution = addon.getSetting('play_resolution')
 year_limit = addon.getSetting('year_limit')
 rating_limit = addon.getSetting('rating_limit')
+exclude_path_option = addon.getSetting('exclude_path_option')
 
 xbmc.log( "[script.sneak] - Value getting from settings: %s" % resolution, xbmc.LOGNOTICE )
 
 i=0
+if addon.getSetting('exclude_path_option') == 'true':
+    exclude_path = addon.getSetting('exclude_path')
+else:
+    exclude_path = 0
+    
 if addon.getSetting('play_mode') == 'true':   
-        runAction(1, resolution, year_limit, rating_limit)
+        runAction(1, resolution, year_limit, rating_limit, exclude_path)
    
 else:
-        runAction(0, resolution, year_limit, rating_limit)
+        runAction(0, resolution, year_limit, rating_limit, exclude_path)
 
 #player=MyPlayer()
 #xbmc.sleep(3000)

@@ -10,17 +10,21 @@ Version 0.1.2 - 2011-03-12
 - deleted count() queries
 - added year limit
 - added movie rating
-			
+
+Version 0.1.3 - 2011-03-14
+- added exclude path option
+- added icon and fanart image
+- bugfix for movie rating sql statement
+	
 toDo:
-	Sneak Icon
-	exclude paths  like 3D content
-	default intro if no Cinema Experience choosen
 	
 	Enable Gui 
 		Exit
 		direct settings
-		Display 3 new Posters
+		Display Posters
 		Display search results
-		
+	
+	(default intro if no Cinema Experience choosen)
+	
 Known Bugs:
 - can handle //stack files like cd-1, cd-2 etc

@@ -8,8 +8,8 @@
 		<setting id="year_limit" label="32445" type="number" default="1900"/>
 		<setting id="enable_gui" type="bool" label="32446" default="false" />
 		<setting id="rating_limit" label="32447" type="labelenum" default="R" values="R|PG-13|PG|G" />
-		<setting id="ExcludePathOption" type="bool" label="32448" default="false" />
-  		<setting id="ExcludePath" type="folder" source="video" label="32449" default="" visible= "eq(-1,true)" enable="eq(-1,true)" />
+		<setting id="exclude_path_option" type="bool" label="32448" default="false" />
+  		<setting id="exclude_path" type="folder" source="video" label="32449" default="" visible= "eq(-1,true)" enable="eq(-1,true)" />
  
 	</category>
 </settings>
