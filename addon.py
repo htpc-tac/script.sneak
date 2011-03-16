@@ -41,13 +41,13 @@ def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit 
             
         #Resolution set    
         if resolution == "0":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, movie WHERE movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND movieview.c07 >= '%s' %s %s ORDER BY RANDOM() LIMIT 1" % (year_limit, exclude_path_sql , rating_sql)
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, movie WHERE movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND movieview.c07 >= '%s' %s %s ORDER BY RANDOM() LIMIT 1" % (year_limit, exclude_path_sql, rating_sql)
             
         elif resolution == "1":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % year_limit, exclude_path_sql
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 576 AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % (year_limit, exclude_path_sql)
            
         elif resolution == "2":
-            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % year_limit, exclude_path_sql
+            sql = "SELECT movieview.c00, movieview.strPath, movieview.strFileName FROM movieview, streamdetails, movie WHERE streamdetails.idFile = movieview.idFile AND movie.idFile = movieview.idFile AND movieview.playcount ISNULL AND iVideoHeight > 720 AND movieview.c07 >= '%s' %s ORDER BY RANDOM() LIMIT 1" % (year_limit, exclude_path_sql)
             
         
         xbmc.log( "[script.sneak] - SQL Statement: %s" % sql, xbmc.LOGNOTICE )
