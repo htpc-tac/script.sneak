@@ -5,11 +5,20 @@ Created on 10.02.2011
 '''
 __scriptID__ = "script.sneak"
 
-import xbmc,xbmcaddon,xbmcgui
+import xbmc
+import xbmcaddon
+import xbmcgui
 import sys
 import os
 import traceback
 from urllib import quote_plus
+
+def strings(id, replacements = None):
+    string = xbmcaddon.Addon(id = 'script.sneak').getLocalizedString(id)
+    if replacements is not None:
+        return string % replacements
+    else:
+        return string
 
 def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit = "R", exclude_path = "0"):
 
@@ -84,6 +93,12 @@ def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit 
         xbmc.log( "[script.sneak] - Movie Path: %s" % movie_path, xbmc.LOGNOTICE )
         xbmc.log( "[script.sneak] - Movie Filename: %s" % movie_filename, xbmc.LOGNOTICE )
         
+        header = "SNEAK"
+        message = "Enjoy the show"
+        image = xbmc.translatePath( os.path.join( addon.getAddonInfo("path"), "icon.png") )
+        xbmc.executebuiltin("Notification( %s, %s, %d, %s)" % (header, message, 5000, image) )
+        
+        
         try:
             if mode == 1:
                 #call cinema experience:
@@ -108,13 +123,99 @@ def runAction( mode = "0" , resolution = "0" ,year_limit = "1900", rating_limit 
         except:
             xbmc.log( "[script.sneak] - Playing movie failed: " , xbmc.LOGNOTICE )
             i=1
-            
 
+def getCachedThumb(file):
+        if file[0:8] == 'stack://':
+            commaPos = file.find(' , ')
+            file = xbmc.getCacheThumbName(file[8:commaPos].strip())
+
+        crc = xbmc.getCacheThumbName(file.lower())
+        return xbmc.translatePath('special://profile/Thumbnails/Video/%s/%s' % (crc[0], crc))
+    
+#**************************
+class SneakGui(xbmcgui.WindowXML):
+    C_MENU_SNEAK = 4000
+    C_MENU_SETTINGS = 4002
+    C_MENU_EXIT = 4003
+    #C_MAIN_POSTER = 4400
+    #C_SEC_POSTER = 4401
+    #C_THR_POSTER = 4402
+    
+    def __init__(self, xmlFilename, scriptPath, addon):
+        xbmcgui.WindowXML.__init__(self, xmlFilename, scriptPath)
+        self.addon = addon
+        
+    def onInit(self):
+        print "MenuGui.onInit"
+        #trivia = "htpc-tac"
+        
+        q=4400
+        while q<4403:
+            sql = "SELECT movieview.strPath, movieview.strFileName FROM movieview WHERE movieview.c07 < 2010 ORDER BY RANDOM() LIMIT 1"
+            
+            try:
+                path, filename, dummy  = xbmc.executehttpapi( "QueryVideoDatabase(%s)" % quote_plus( sql ), ).split( "</field>" )
+            except:
+                xbmc.log( "[script.sneak] - SQL failed for guisetup: " , xbmc.LOGNOTICE )
+            
+            ja = 0
+            ja = path.find("<field>")
+            
+            if ja !=-1:
+                
+                dummy, path = path.split( "<field>" )
+                dummy, filename= filename.split( "<field>" )
+            
+            xbmc.log( "[script.sneak] - Gui Poster Path: %s " % path, xbmc.LOGNOTICE )
+            xbmc.log( "[script.sneak] - Gui Poster filename: %s"  % filename, xbmc.LOGNOTICE )
+    
+            poster = getCachedThumb(os.path.join(path, filename))
+            xbmc.log( "[script.sneak] - Gui Poster combine: %s"  % poster, xbmc.LOGNOTICE )
+            self.getControl(q).setImage(poster)
+            q= q+1
+        #label = '  *  '.join(trivia)
+        #self.getControl(self.C_MENU_COLLECTION_TRIVIA).setLabel(label)
+        
+    
+    def onAction(self, action):
+        if action.getId() == 9 or action.getId() == 10:
+            self.close()
+            
+    def onClick(self, controlId):
+        if controlId == self.C_MENU_SNEAK:
+            if addon.getSetting('play_mode') == 'true':   
+                runAction(1, resolution, year_limit, rating_limit, exclude_path)
+            else:
+                runAction(0, resolution, year_limit, rating_limit, exclude_path)
+
+        elif controlId == self.C_MENU_SETTINGS:
+            self.addon.openSettings()
+
+        elif controlId == self.C_MENU_EXIT:
+            self.close()
+            
+     #noinspection PyUnusedLocal
+    def onFocus(self, controlId):
+        pass
+    
+    def setVideoFile(self, path, filename, setCoverFile = False):
+        if filename[0:8] == 'stack://':
+            self.videoFile = filename
+        else:
+            self.videoFile = os.path.join(path, filename)
+
+        if setCoverFile:
+            self.coverFile = thumb.getCachedThumb(self.videoFile)
+           
+#run the script
+
+# read the settings from /resources/settings.xml
 addon = xbmcaddon.Addon(id = 'script.sneak')
 resolution = addon.getSetting('play_resolution')
 year_limit = addon.getSetting('year_limit')
 rating_limit = addon.getSetting('rating_limit')
 exclude_path_option = addon.getSetting('exclude_path_option')
+#enable_gui = addon.getSetting('enable_gui')
 
 xbmc.log( "[script.sneak] - Value getting from settings: %s" % resolution, xbmc.LOGNOTICE )
 
@@ -122,13 +223,29 @@ i=0
 if addon.getSetting('exclude_path_option') == 'true':
     exclude_path = addon.getSetting('exclude_path')
 else:
-    exclude_path = 0
-    
-if addon.getSetting('play_mode') == 'true':   
-        runAction(1, resolution, year_limit, rating_limit, exclude_path)
-   
+    exclude_path = "0"
+
+if addon.getSetting('enable_gui') == 'true':
+    __name__ = '__main__'
+    path = addon.getAddonInfo('path')
+    addon = xbmcaddon.Addon(id = 'script.sneak')
+
+    sneakdisplay = SneakGui('script-sneak-menu.xml', path, addon = addon)
+    sneakdisplay.doModal()
+    del sneakdisplay
 else:
-        runAction(0, resolution, year_limit, rating_limit, exclude_path)
+    
+    if addon.getSetting('play_mode') == 'true':   
+            runAction(1, resolution, year_limit, rating_limit, exclude_path)
+       
+    else:
+            runAction(0, resolution, year_limit, rating_limit, exclude_path)
+
+
+#to run the window:
+#sneakdisplay = SneakGui()
+#sneakdisplay .doModal()
+#del sneakdisplay
 
 #player=MyPlayer()
 #xbmc.sleep(3000)

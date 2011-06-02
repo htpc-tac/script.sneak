@@ -14,4 +14,9 @@
 	<string id="32447">Limitiere Altersfreigabe</string>
 	<string id="32448">Schließe Pfad aus</string>
 	<string id="32449">Auszuschließender Pfad</string>
+	
+	<!-- Gui strings: -->
+	<string id="30100">Sneak Preview</string>
+	<string id="30101">Sneak Settings</string>
+	<string id="30102">Beenden</string>
 </strings>

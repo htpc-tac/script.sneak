@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window id="5000">
+    <allowoverlay>no</allowoverlay>
+    <defaultcontrol always="false">4000</defaultcontrol>
+    <coordinates>
+        <system>1</system>
+        <posx>0</posx>
+        <posy>0</posy>
+    </coordinates>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    <controls>
+    	<!-- visibility markers -->
+        <control type="label" id="5001">
+            <description>visibility marker for poster group</description>
+        </control>
+        
+        <!-- Background -->
+        <control type="image">
+            <posx>0</posx>
+            <posy>0</posy>
+            <width>1280</width>
+            <height>720</height>
+            <texture>SneakBackgroundGrey.jpg</texture>
+        </control>
+
+		<!-- photo group -->
+        
+            
+            <control type="image" id="4400">
+                <posx>20</posx>
+                <posy>-60</posy>
+                <width>148</width>
+                <aspectratio>keep</aspectratio>
+                <!--  <animation effect="slide" end="1" time="1" delay="1000">WindowOpen</animation> -->
+                <camera x="0" y="360"></camera>
+                <animation effect="rotatey" end="-25" time="1">WindowOpen</animation>
+                
+            </control>
+            <control type="image" id="4401">
+                <posx>260</posx>
+                <posy>-150</posy>
+                <width>148</width>
+                <aspectratio>keep</aspectratio>
+                <camera x="50" y="300"></camera>
+                <animation effect="rotatey" end="-25"  time="1">WindowOpen</animation>
+            </control>
+            <control type="image" id="4402">
+                <posx>530</posx>
+                <posy>-220</posy>
+                <width>148</width>
+                <aspectratio>keep</aspectratio>
+                <camera x="80" y="280"></camera>
+                <animation effect="rotatey" end="-25"  time="1">WindowOpen</animation>
+            </control>
+   
+   			
+        
+        <!-- Button -->
+        <control type="image">
+            <posx>10</posx>
+            <posy>600</posy>
+            <width>80</width>
+            <aspectratio>keep</aspectratio>
+            <texture>sneak-button.png</texture>
+            <animation effect="fade" start="100" end="50" time="400" condition="!Control.HasFocus(4000)">Conditional</animation>
+        </control>
+        <control type="button" id="4000">
+            <posx>110</posx>
+            <posy>650</posy>
+            <width>256</width>
+            <height>40</height>
+            <label>$ADDON[script.sneak 30100]</label>
+            <align>left</align>
+            <textcolor>ffffffff</textcolor>
+            <texturefocus/>
+            <texturenofocus/>
+            <font>font30</font>
+            <onleft>4002</onleft>
+            <onright>4003</onright>
+        </control>
+ 
+        <control type="image">
+            <posx>300</posx>
+            <posy>600</posy>
+            <width>80</width>
+            <aspectratio>keep</aspectratio>
+            <texture>sneak-button-radio.png</texture> 
+            <animation effect="fade" start="100" end="50" time="400" condition="!Control.HasFocus(4002)">Conditional</animation>
+        </control>
+        <control type="button" id="4002">
+            <posx>410</posx>
+            <posy>650</posy>
+            <width>256</width>
+            <height>40</height>
+            <label>$ADDON[script.sneak 30101]</label>
+            <align>left</align>
+            <textcolor>ffffffff</textcolor>
+            <texturefocus/>
+            <texturenofocus/>
+            <font>font13</font>
+            <onleft>4003</onleft>
+            <onright>4000</onright>
+        </control>
+
+        <control type="image">
+            <posx>600</posx>
+            <posy>600</posy>
+            <width>80</width>
+            <aspectratio>keep</aspectratio>
+            <texture>sneak-button-ending.png</texture>
+            <animation effect="fade" start="100" end="50" time="400" condition="!Control.HasFocus(4003)">Conditional</animation>
+        </control>
+        <control type="button" id="4003">
+            <posx>710</posx>
+            <posy>650</posy>
+            <width>256</width>
+            <height>40</height>
+            <label>$ADDON[script.sneak 30102]</label>
+            <align>left</align>
+            <textcolor>ffffffff</textcolor>
+            <texturefocus/>
+            <texturenofocus/>
+            <font>font13</font>
+            <onleft>4000</onleft>
+            <onright>4002</onright>
+        </control>
+
+        <control type="image">
+            <description>Activate glasspane when addon settings are visible</description>
+            <posx>0</posx>
+            <posy>0</posy>
+            <width>1280</width>
+            <height>720</height>
+            <texture>sneak-background-glass.png</texture>
+            <animation effect="fade" start="0" end="100" time="200">VisibleChange</animation>
+            <visible>Window.IsVisible(140)</visible>
+        </control>
+
+
+    </controls>
+</window>
